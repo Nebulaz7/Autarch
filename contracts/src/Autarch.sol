@@ -39,7 +39,19 @@ contract Autarch {
     }
 
     uint256 public bountyCount;
-    mapping(uint256 => Bounty) public bounties;
+    mapping(uint256 => Bounty) internal _bounties;
+
+    /// @notice Get a bounty by ID
+    function getBounty(uint256 bountyId) external view returns (Bounty memory) {
+        return _bounties[bountyId];
+    }
+
+    /// @notice Get just the status of a bounty (gas-efficient for on-chain callers)
+    function getBountyStatus(
+        uint256 bountyId
+    ) external view returns (BountyStatus) {
+        return _bounties[bountyId].status;
+    }
 
     // Maps a Somnia Agent requestId to the corresponding bountyId
     mapping(uint256 => uint256) public requestToBounty;
@@ -89,6 +101,8 @@ contract Autarch {
     error DisputeWindowExpired();
     error DisputeWindowNotExpired();
 
+    address public owner;
+
     modifier onlyArbiter() {
         _onlyArbiter();
         _;
@@ -98,8 +112,15 @@ contract Autarch {
         if (msg.sender != arbiter) revert NotAuthorized();
     }
 
-    constructor(address _platformAddress, address _arbiter) {
+    constructor(address _platformAddress) {
         PLATFORM = IAgentRequester(_platformAddress);
+        owner = msg.sender;
+    }
+
+    /// @notice Set the arbiter address (can only be called once by the owner)
+    function setArbiter(address _arbiter) external {
+        if (msg.sender != owner) revert NotAuthorized();
+        if (arbiter != address(0)) revert InvalidState(); // Can only set once
         arbiter = _arbiter;
     }
 
@@ -108,7 +129,7 @@ contract Autarch {
         if (msg.value == 0) revert PaymentFailed();
 
         bountyCount++;
-        Bounty storage b = bounties[bountyCount];
+        Bounty storage b = _bounties[bountyCount];
         b.id = bountyCount;
         b.poster = msg.sender;
         b.amount = msg.value;
@@ -126,7 +147,7 @@ contract Autarch {
         string calldata prUrl,
         string calldata previewUrl
     ) external {
-        Bounty storage b = bounties[bountyId];
+        Bounty storage b = _bounties[bountyId];
         if (b.status != BountyStatus.Open) revert InvalidState();
 
         b.developer = msg.sender;
@@ -159,7 +180,7 @@ contract Autarch {
         }
 
         uint256 bountyId = requestToBounty[requestId];
-        Bounty storage b = bounties[bountyId];
+        Bounty storage b = _bounties[bountyId];
 
         if (b.step == PipelineStep.FetchingDiff) {
             b.codeDiff = string(responses[0].data);
@@ -199,13 +220,13 @@ contract Autarch {
     }
 
     function _failBountySetupDispute(uint256 bountyId) internal {
-        Bounty storage b = bounties[bountyId];
+        Bounty storage b = _bounties[bountyId];
         b.status = BountyStatus.Failed;
         b.disputeDeadline = block.timestamp + DISPUTE_WINDOW;
     }
 
     function _releaseFunds(uint256 bountyId) internal {
-        Bounty storage b = bounties[bountyId];
+        Bounty storage b = _bounties[bountyId];
         uint256 amount = b.amount;
         b.amount = 0; // Prevent reentrancy
 
@@ -217,7 +238,7 @@ contract Autarch {
 
     /// @notice Raise a dispute within the 24hr window if failed
     function raiseDispute(uint256 bountyId) external {
-        Bounty storage b = bounties[bountyId];
+        Bounty storage b = _bounties[bountyId];
         if (b.status != BountyStatus.Failed) revert InvalidState();
         if (msg.sender != b.developer) revert NotAuthorized();
         if (block.timestamp > b.disputeDeadline) revert DisputeWindowExpired();
@@ -231,7 +252,7 @@ contract Autarch {
         uint256 bountyId,
         bool approved
     ) external onlyArbiter {
-        Bounty storage b = bounties[bountyId];
+        Bounty storage b = _bounties[bountyId];
         if (b.status != BountyStatus.Disputed) revert InvalidState();
 
         b.status = BountyStatus.Settled;

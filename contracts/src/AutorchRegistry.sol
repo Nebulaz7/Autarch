@@ -18,8 +18,7 @@ contract AutorchRegistry {
 
     /// @notice Used to index or feature a specific bounty on the frontend
     function registerBounty(uint256 bountyId) external {
-        (, , , , , , , Autarch.BountyStatus status, , , , , , , ) = autarch
-            .bounties(bountyId);
+        Autarch.BountyStatus status = autarch.getBountyStatus(bountyId);
 
         // Ensure it actually exists by checking it's at least created
         // We aren't doing strict access control because anyone can register an open bounty

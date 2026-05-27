@@ -36,6 +36,13 @@ contract DeployScript is Script {
         // 2. Deploy Autarch core with Somnia Platform interface and Arbiter
         Autarch autarch = new Autarch(platformAddress, address(arbiter));
 
+        // Let's verify that the precomputed address matches the actual deployed address
+        // If it doesn't, Somnia's nonce logic might be slightly different than default EVM
+        require(
+            address(autarch) == precomputedAutarchAddress,
+            "Nonce mismatch!"
+        );
+
         // 3. Deploy the Registry for frontend querying
         AutorchRegistry registry = new AutorchRegistry(address(autarch));
 
