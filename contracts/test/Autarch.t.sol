@@ -1,0 +1,205 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import {Test} from "forge-std/Test.sol";
+import {Autarch} from "../src/Autarch.sol";
+import {IAgentRequester, Response} from "../src/interfaces/IAgentRequester.sol";
+
+// Mock IAgentRequester platform to simulate Somnia's L1 Agents
+contract MockAgentRequester is IAgentRequester {
+    uint256 public nextRequestId = 1;
+
+    // Store request data so we can trigger callbacks in tests
+    struct PendingRequest {
+        uint256 agentId;
+        bytes payload;
+        address caller;
+    }
+    mapping(uint256 => PendingRequest) public pendingRequests;
+
+    function request(
+        uint256 agentId,
+        bytes calldata payload
+    ) external returns (uint256) {
+        uint256 reqId = nextRequestId++;
+        pendingRequests[reqId] = PendingRequest({
+            agentId: agentId,
+            payload: payload,
+            caller: msg.sender
+        });
+        return reqId;
+    }
+
+    function handleResponse(
+        uint256 requestId,
+        Response[] memory responses
+    ) external {
+        // Mock doesn't implement this natively, we'll call `Autarch.handleResponse` directly in tests
+        // to simulate the blockchain invoking the callback.
+    }
+}
+
+contract AutarchTest is Test {
+    Autarch public autarch;
+    MockAgentRequester public platform;
+
+    address public poster = address(1);
+    address public developer = address(2);
+    address public arbiter = address(3);
+
+    function setUp() public {
+        platform = new MockAgentRequester();
+        autarch = new Autarch(address(platform), arbiter);
+
+        vm.deal(poster, 100 ether);
+        vm.deal(developer, 1 ether);
+    }
+
+    function test_CreateBounty() public {
+        vm.prank(poster);
+        autarch.createBounty{value: 1 ether}("Build a navigation bar");
+
+        (
+            uint256 id,
+            address p,
+            address d,
+            uint256 amount,
+            string memory spec,
+            ,
+            ,
+            Autarch.BountyStatus status,
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+
+        ) = autarch.bounties(1);
+
+        assertEq(id, 1);
+        assertEq(p, poster);
+        assertEq(d, address(0));
+        assertEq(amount, 1 ether);
+        assertEq(spec, "Build a navigation bar");
+        assertEq(uint256(status), uint256(Autarch.BountyStatus.Open));
+    }
+
+    function test_SubmitWork() public {
+        vm.prank(poster);
+        autarch.createBounty{value: 1 ether}("Build a navigation bar");
+
+        vm.prank(developer);
+        autarch.submitWork(
+            1,
+            "https://github.com/pr/1",
+            "https://vercel.com/preview"
+        );
+
+        (
+            ,
+            ,
+            address d,
+            ,
+            ,
+            string memory prUrl,
+            string memory previewUrl,
+            Autarch.BountyStatus status,
+            Autarch.PipelineStep step,
+            ,
+            ,
+            uint256 requestId,
+            ,
+            ,
+
+        ) = autarch.bounties(1);
+
+        assertEq(d, developer);
+        assertEq(prUrl, "https://github.com/pr/1");
+        assertEq(previewUrl, "https://vercel.com/preview");
+        assertEq(uint256(status), uint256(Autarch.BountyStatus.UnderReview));
+        assertEq(uint256(step), uint256(Autarch.PipelineStep.FetchingDiff));
+        assertEq(requestId, 1); // Mock starts at 1
+    }
+
+    function test_FullAgentPipelinePass() public {
+        // 1. Create & Submit
+        vm.prank(poster);
+        autarch.createBounty{value: 1 ether}("Build a navigation bar");
+
+        vm.prank(developer);
+        autarch.submitWork(1, "pr_url", "preview_url");
+
+        uint256 initialBal = developer.balance;
+
+        // 2. Simulate Callback 1: JSON API -> returns GitHub Diff
+        Response[] memory r1 = new Response[](1);
+        r1[0] = Response({success: true, data: bytes("mock_diff")});
+        vm.prank(address(platform));
+        autarch.handleResponse(1, r1); // reqId 1
+
+        // 3. Simulate Callback 2: LLM Parse -> returns UI Scrape
+        Response[] memory r2 = new Response[](1);
+        r2[0] = Response({success: true, data: bytes("mock_ui_html")});
+        vm.prank(address(platform));
+        autarch.handleResponse(2, r2); // reqId 2
+
+        // 4. Simulate Callback 3: LLM Inference -> returns Pass (true) + Confidence (90)
+        Response[] memory r3 = new Response[](1);
+        r3[0] = Response({success: true, data: abi.encode(true, uint256(90))});
+        vm.prank(address(platform));
+        autarch.handleResponse(3, r3); // reqId 3
+
+        // 5. Verify outcome
+        (, , , , , , , Autarch.BountyStatus status, , , , , , , ) = autarch
+            .bounties(1);
+        assertEq(uint256(status), uint256(Autarch.BountyStatus.Passed));
+        assertEq(developer.balance, initialBal + 1 ether);
+    }
+
+    function test_AgentPipelineFailAndDispute() public {
+        // 1. Create & Submit
+        vm.prank(poster);
+        autarch.createBounty{value: 1 ether}("Build a nav");
+
+        vm.prank(developer);
+        autarch.submitWork(1, "pr", "preview");
+
+        // 2. Simulate Callback 1 & 2
+        Response[] memory r1 = new Response[](1);
+        r1[0] = Response({success: true, data: bytes("diff")});
+        vm.prank(address(platform));
+        autarch.handleResponse(1, r1);
+
+        Response[] memory r2 = new Response[](1);
+        r2[0] = Response({success: true, data: bytes("ui")});
+        vm.prank(address(platform));
+        autarch.handleResponse(2, r2);
+
+        // 3. Simulate Callback 3: Failed (true success, but pass = false)
+        Response[] memory r3 = new Response[](1);
+        r3[0] = Response({success: true, data: abi.encode(false, uint256(95))}); // Agent ran successfully, but evaluated to fail
+        vm.prank(address(platform));
+        autarch.handleResponse(3, r3);
+
+        (, , , , , , , Autarch.BountyStatus status, , , , , , , ) = autarch
+            .bounties(1);
+        assertEq(uint256(status), uint256(Autarch.BountyStatus.Failed));
+
+        // 4. Developer Disputes
+        vm.prank(developer);
+        autarch.raiseDispute(1);
+
+        (, , , , , , , status, , , , , , , ) = autarch.bounties(1);
+        assertEq(uint256(status), uint256(Autarch.BountyStatus.Disputed));
+
+        // 5. Arbiter approves dispute
+        uint256 initialBal = developer.balance;
+        vm.prank(arbiter);
+        autarch.settleDispute(1, true);
+
+        (, , , , , , , status, , , , , , , ) = autarch.bounties(1);
+        assertEq(uint256(status), uint256(Autarch.BountyStatus.Settled));
+        assertEq(developer.balance, initialBal + 1 ether);
+    }
+}
