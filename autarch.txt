@@ -1,0 +1,39 @@
+Autarch: Decentralized Escrow with Autonomous AI Validation
+Project Overview
+Autarch is a next-generation decentralized escrow protocol deployed on the Somnia Testnet. It enables trustless peer-to-peer agreements by locking funds in a smart contract and utilizing a deterministic, multi-agent AI pipeline to automatically verify whether the submitted work meets the initial requirements. By removing the need for human arbitration, Autarch significantly reduces dispute resolution times, lowers costs, and ensures objective, rapid payouts for freelancers and developers.
+
+What We Built
+1. Smart Contract Infrastructure (Solidity)
+We engineered a robust suite of smart contracts deployed seamlessly to the Somnia Network:
+
+Autarch.sol: The core escrow contract that holds user funds securely. It orchestrates the entire lifecycle of a bounty—from creation and funding to work submission and final payout.
+AutorchRegistry.sol: Acts as a decentralized index, ensuring all escrows are tracked and easily discoverable by the frontend and indexing services.
+AutorchArbiter.sol: A specialized role-based contract that acts as the bridge between the AI agent consensus pipeline and the on-chain escrow logic, securely feeding the final "Approve" or "Reject" decision on-chain to unlock funds.
+Somnia Testnet Deployments:
+
+Autarch Core: 0xcA83D3a6Cb7B94e6A5eF3c84e103253d119CFA82
+Autarch Arbiter: 0x342B39A610F0d415C7a31CC9E2C586C04C0f1f04
+Autarch Registry: 0x90d63D11281B036CdD4ec55A84169029E4a93D6a
+2. The Frontend Architecture (Next.js 16)
+We developed a sophisticated, ultra-modern Web3 frontend tailored to provide a professional, premium user experience.
+
+Design Aesthetics: Inspired by leading AI companies (like Anthropic), the UI features a clean "warm ivory and charcoal" color palette, devoid of noisy gradients. It utilizes sleek typography (Playfair Display & Inter), subtle borders, and smooth framer-motion micro-interactions.
+Web3 Integrations: The dApp is fully integrated with Reown AppKit and Wagmi, supporting seamless wallet connections natively configured for the Somnia Testnet.
+Turbopack Optimization: The frontend utilizes Next.js 16's Turbopack for lightning-fast module resolution. We custom-engineered aliasing configurations to bypass complex dynamic dependency issues intrinsic to modern Web3 packages, ensuring a pristine production build.
+3. AI Sandbox & Validation Engine
+To demonstrate the protocol's functionality securely, we built a comprehensive useSandbox simulation engine into the frontend. This engine realistically mimics the flow of our off-chain AI pipeline:
+
+Code Fetching & Scraping: Gathering the submitted code diffs or PRs.
+Visual / Logic Evaluation: Utilizing AI agents to analyze the code against the original bounty specifications.
+Consensus Arbitration: Waiting for a deterministic "consensus" among multiple agent nodes before broadcasting the final cryptographic approval to the Autarch smart contract.
+The Process
+Ideation & Architecture: We mapped out the flow of funds to ensure absolute security, avoiding reentrancy vulnerabilities and ensuring only the designated Arbiter could trigger payouts.
+Smart Contract Development: We utilized Foundry for rapid compilation, testing, and deployment. We set up environment variables for Somnia RPC endpoints and securely broadcasted the deployment scripts.
+Frontend Assembly: We initialized a Next.js application, systematically building out atomic components (Navbar, Hero, BountyLists, Modals).
+Debugging & Compilation: During integration, we encountered deep Webpack/Turbopack module resolution errors triggered by the Wagmi core. We successfully engineered a next.config.ts alias bypass using a mock module strategy to ensure the application could compile and deploy into a production environment.
+Polishing: We refined the UI with strict layout paradigms, ensuring the user experience was intuitive, responsive, and visually stunning.
+Key Achievements
+Successfully deployed a complex, multi-contract architecture to the Somnia Testnet.
+Engineered a visually striking, production-ready frontend devoid of standard Web3 boilerplate aesthetics, focusing strictly on premium UI/UX.
+Overcame cutting-edge framework limitations (Next.js 16 Turbopack strict module resolution) to integrate modern Web3 wallet connectors (Reown AppKit/Wagmi).
+Prototyped a tangible interface for off-chain AI consensus models to interact directly with on-chain escrow logic.
