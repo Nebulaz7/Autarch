@@ -9,12 +9,9 @@ const nextConfig: NextConfig = {
     };
     return config;
   },
-  experimental: {
-    turbo: {
-      resolveAlias: {
-        // Use absolute path so Turbopack doesn't resolve relatively from deep within node_modules!
-        accounts: path.resolve(__dirname, "app/lib/mock-accounts.ts"),
-      },
+  turbopack: {
+    resolveAlias: {
+      accounts: "./app/lib/mock-accounts.ts",
     },
   },
 };
