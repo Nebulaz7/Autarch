@@ -2,14 +2,11 @@
 
 import React from "react";
 import { useAccount, useDisconnect } from "wagmi";
-import { Cpu, HelpCircle, Layers, ToggleLeft, ToggleRight } from "lucide-react";
+import { Layers } from "lucide-react";
 
-interface NavbarProps {
-  isSandbox: boolean;
-  setIsSandbox: (val: boolean) => void;
-}
+interface NavbarProps {}
 
-export default function Navbar({ isSandbox, setIsSandbox }: NavbarProps) {
+export default function Navbar() {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
 
@@ -33,37 +30,22 @@ export default function Navbar({ isSandbox, setIsSandbox }: NavbarProps) {
         {/* Action Items */}
         <div className="flex items-center gap-4 sm:gap-6">
           
-          {/* Mode Switcher */}
-          <button
-            onClick={() => setIsSandbox(!isSandbox)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-md thin-border bg-card-bg text-xs font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-          >
+          {/* Somnia Network Indicator */}
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-md thin-border bg-card-bg text-xs font-medium">
             <span className="flex h-2 w-2 relative">
-              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${isSandbox ? "bg-amber-400" : "bg-[#d97757]"}`}></span>
-              <span className={`relative inline-flex rounded-full h-2 w-2 ${isSandbox ? "bg-amber-500" : "bg-clay"}`}></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-clay"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-clay"></span>
             </span>
-            <span className="text-foreground">
-              {isSandbox ? "Sandbox Mode" : "Somnia Network"}
+            <span className="text-foreground font-mono">
+              Somnia Network
             </span>
-            {isSandbox ? (
-              <ToggleRight className="w-5 h-5 text-amber-500" />
-            ) : (
-              <ToggleLeft className="w-5 h-5 text-zinc-400" />
-            )}
-          </button>
+          </div>
 
-          {/* Web3 Wallet Connection / Sandbox indicator */}
-          {isSandbox ? (
-            <div className="flex items-center gap-2 px-4 py-2 rounded bg-[#191919] dark:bg-[#F5F5F5] text-background text-xs font-semibold uppercase tracking-wider font-mono">
-              <Cpu className="w-3.5 h-3.5" />
-              Simulated Wallet
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              {/* Reown AppKit Button */}
-              <appkit-button balance="show" size="md" label="Connect Wallet" />
-            </div>
-          )}
+          {/* Web3 Wallet Connection */}
+          <div className="flex items-center gap-2">
+            {/* Reown AppKit Button */}
+            <appkit-button balance="show" size="md" label="Connect Wallet" />
+          </div>
 
         </div>
       </div>

@@ -6,7 +6,6 @@ import { Coins, GitBranch, Terminal, ShieldAlert, CheckCircle2, AlertCircle, Pla
 
 interface BountyDetailProps {
   bounty: Bounty;
-  isSandbox: boolean;
   userAddress: string;
   onBack: () => void;
   onSubmitWork: (bountyId: number) => void;
@@ -16,7 +15,6 @@ interface BountyDetailProps {
 
 export default function BountyDetail({
   bounty,
-  isSandbox,
   userAddress,
   onBack,
   onSubmitWork,
@@ -61,8 +59,8 @@ export default function BountyDetail({
     }
   };
 
-  const isDeveloper = bounty.developer.toLowerCase() === userAddress.toLowerCase() || isSandbox;
-  const isPoster = bounty.poster.toLowerCase() === userAddress.toLowerCase() || isSandbox;
+  const isDeveloper = bounty.developer.toLowerCase() === userAddress.toLowerCase();
+  const isPoster = bounty.poster.toLowerCase() === userAddress.toLowerCase();
 
   return (
     <div className="bg-background py-6 transition-colors duration-300">
