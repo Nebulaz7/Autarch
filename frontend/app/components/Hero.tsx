@@ -93,12 +93,7 @@ const Hero = ({ bountiesCount, totalLocked }: HeroProps) => {
             size="lg"
             className="bg-white text-black hover:bg-gray-200 px-8 py-6 text-lg font-syne transition-all shadow-lg hover:scale-102 animate-fade-in"
             onClick={() => {
-              const element = document.getElementById("escrows");
-              if (element) {
-                element.scrollIntoView({ behavior: "smooth" });
-              } else {
-                window.location.href = "/docs";
-              }
+              window.location.href = "/bounty";
             }}
           >
             Explore Bounties

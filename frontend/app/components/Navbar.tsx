@@ -36,7 +36,7 @@ export default function Navbar() {
             <Link href="#pipeline" className="hover:text-foreground transition">
               Pipeline
             </Link>
-            <Link href="/bounties" className="hover:text-foreground transition">
+            <Link href="/bounty" className="hover:text-foreground transition">
               Active Bounties
             </Link>
             <a href="/dashboard" className="hover:text-foreground transition">
@@ -91,7 +91,7 @@ export default function Navbar() {
               Pipeline
             </Link>
             <Link
-              href="/bounties"
+              href="/bounty"
               onClick={toggleMenu}
               className="text-3xl font-bold tracking-tight hover:text-clay transition"
             >
