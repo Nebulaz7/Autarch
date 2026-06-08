@@ -3,7 +3,8 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface NavbarProps {}
 
@@ -45,6 +46,12 @@ export default function Navbar() {
 
           {/* Right: Connect Wallet & Mobile Toggle */}
           <div className="flex items-center justify-end gap-4 text-zinc-500 font-medium">
+            <Button
+              onClick={() => (window.location.href = "/bounty")}
+              className="hover:text-black transition hidden lg:block"
+            >
+              <Plus className="inline-block w-4 h-4 mr-2" /> Create Bounty
+            </Button>
             {/* Reown AppKit Button */}
             <div className="hidden sm:block">
               <appkit-button balance="show" size="md" label="Connect Wallet" />
