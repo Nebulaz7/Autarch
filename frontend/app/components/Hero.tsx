@@ -1,110 +1,134 @@
 "use client";
 
 import React from "react";
+import { Button } from "@/components/ui/button";
+import MagicRings from "./animations/MagicRings";
 import { motion } from "framer-motion";
-import { Coins, Cpu, ShieldCheck } from "lucide-react";
 
 interface HeroProps {
   bountiesCount: number;
   totalLocked: string;
 }
 
-export default function Hero({ bountiesCount, totalLocked }: HeroProps) {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants: any = {
-    hidden: { opacity: 0, y: 15 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
-  };
-
+const Hero = ({ bountiesCount, totalLocked }: HeroProps) => {
   return (
-    <section className="py-20 bg-background transition-colors duration-300">
-      <div className="max-w-4xl mx-auto px-6 text-center">
+    <section className="relative flex flex-col items-center justify-center min-h-[90vh] px-4 text-center w-full overflow-hidden">
+      {/* Background Animation */}
+      <div className="absolute inset-0 z-0 opacity-50 flex items-center justify-center">
+        <div className="w-full h-full max-w-7xl max-h-[1024px]">
+          <MagicRings
+            color="#58A0B4"
+            colorTwo="#FFFFFF"
+            ringCount={6}
+            speed={1}
+            attenuation={20}
+            lineThickness={2}
+            baseRadius={0.35}
+            radiusStep={0.1}
+            scaleRate={0.2}
+            opacity={1}
+            blur={0}
+            noiseAmount={0.1}
+            rotation={0}
+            ringGap={1.5}
+            fadeIn={0.7}
+            fadeOut={0.5}
+            followMouse={false}
+            mouseInfluence={0}
+            hoverScale={1}
+            parallax={0.05}
+            clickBurst={false}
+          />
+        </div>
+      </div>
+
+      <div className="max-w-5xl mx-auto space-y-8 mt-8 relative z-10 flex flex-col items-center">
+        {/* Tag / Badge
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="flex flex-col items-center gap-6"
+          initial={{ opacity: 0, filter: "blur(12px)", y: 15 }}
+          animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-mono font-medium tracking-wide uppercase text-gray-300"
         >
-          {/* Tag */}
-          <motion.div
-            variants={itemVariants}
-            className="px-3 py-1 bg-card-bg thin-border rounded text-xs font-mono font-medium tracking-wide uppercase text-zinc-500"
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          Autonomous Bounty Verifier
+        </motion.div> */}
+
+        {/* Main Heading */}
+        <motion.h1
+          initial={{ opacity: 0, filter: "blur(12px)", y: 15 }}
+          animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
+          className="text-3xl md:text-5xl font-syne tracking-tight text-white leading-tight"
+        >
+          <span className="font-bold">Code</span> shouldn't just be{" "}
+          <span className="font-bold">Written</span>, it should be{" "}
+          <span className="font-bold">Verified</span>.
+        </motion.h1>
+
+        {/* Subheading */}
+        <motion.div
+          initial={{ opacity: 0, filter: "blur(12px)", y: 15 }}
+          animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+          className="space-y-4"
+        >
+          <p className="text-base md:text-lg text-gray-400 font-dm-sans max-w-2xl mx-auto leading-relaxed">
+            <span className="underline text-gray-300">
+              The first autonomous
+            </span>{" "}
+            code reviewer that handles the payout. <br /> AI consensus. Verified
+            code. Instant payouts. Powered by Somnia.
+          </p>
+        </motion.div>
+
+        {/* Call to Action */}
+        <motion.div
+          initial={{ opacity: 0, filter: "blur(12px)", y: 15 }}
+          animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
+          className="flex items-center justify-center gap-4 pt-2"
+        >
+          <Button
+            size="lg"
+            className="bg-white text-black hover:bg-gray-200 px-8 py-6 text-lg font-syne transition-all shadow-lg hover:scale-102 animate-fade-in"
+            onClick={() => {
+              const element = document.getElementById("escrows");
+              if (element) {
+                element.scrollIntoView({ behavior: "smooth" });
+              } else {
+                window.location.href = "/docs";
+              }
+            }}
           >
-            Decentralized Escrow Protocol
-          </motion.div>
+            Explore Bounties
+          </Button>
+        </motion.div>
 
-          {/* Heading */}
-          <motion.h1
-            variants={itemVariants}
-            className="font-serif text-4xl sm:text-6xl font-normal leading-tight text-foreground tracking-tight max-w-3xl"
-          >
-            On-chain escrow with autonomous <span className="italic font-light text-clay">AI validation</span>
-          </motion.h1>
-
-          {/* Subheading */}
-          <motion.p
-            variants={itemVariants}
-            className="font-sans text-base sm:text-lg leading-relaxed text-zinc-500 max-w-2xl"
-          >
-            Autarch secures peer-to-peer agreements on the Somnia Network. Post specifications, lock funds, and let the 3-step AI Agent consensus pipeline automatically verify code diffs and visual preview deployments for instant payout.
-          </motion.p>
-
-          {/* Spacer */}
-          <div className="h-6" />
-
-          {/* Stat Cards Grid */}
-          <motion.div
-            variants={itemVariants}
-            className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6 text-left"
-          >
-            {/* Stat 1 */}
-            <div className="p-6 bg-card-bg thin-border rounded-lg relative overflow-hidden flex flex-col justify-between h-36">
-              <div className="flex justify-between items-start">
-                <span className="text-xs uppercase font-mono tracking-wider text-zinc-500">Active Escrows</span>
-                <Coins className="w-4 h-4 text-clay" />
-              </div>
-              <div className="mt-4">
-                <span className="font-serif text-3xl font-medium text-foreground">{bountiesCount}</span>
-                <p className="text-[11px] text-zinc-400 mt-1">Smart contracts currently active</p>
-              </div>
-            </div>
-
-            {/* Stat 2 */}
-            <div className="p-6 bg-card-bg thin-border rounded-lg relative overflow-hidden flex flex-col justify-between h-36">
-              <div className="flex justify-between items-start">
-                <span className="text-xs uppercase font-mono tracking-wider text-zinc-500">Total Locked Value</span>
-                <ShieldCheck className="w-4 h-4 text-clay" />
-              </div>
-              <div className="mt-4">
-                <span className="font-serif text-3xl font-medium text-foreground">{totalLocked} SOMI</span>
-                <p className="text-[11px] text-zinc-400 mt-1">Funds secured on Somnia L1</p>
-              </div>
-            </div>
-
-            {/* Stat 3 */}
-            <div className="p-6 bg-card-bg thin-border rounded-lg relative overflow-hidden flex flex-col justify-between h-36">
-              <div className="flex justify-between items-start">
-                <span className="text-xs uppercase font-mono tracking-wider text-zinc-500">Validation Nodes</span>
-                <Cpu className="w-4 h-4 text-clay" />
-              </div>
-              <div className="mt-4">
-                <span className="font-serif text-3xl font-medium text-foreground">3 Agents</span>
-                <p className="text-[11px] text-zinc-400 mt-1">Consensus-driven AI execution</p>
-              </div>
-            </div>
-          </motion.div>
+        {/* Real-time stats */}
+        <motion.div
+          initial={{ opacity: 0, filter: "blur(12px)", y: 15 }}
+          animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.5 }}
+          className="flex flex-wrap items-center justify-center gap-8 pt-8 text-xs font-mono uppercase tracking-wider text-gray-400"
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-white font-bold">{bountiesCount}</span> Active
+            Bounties
+          </div>
+          <div className="w-1.5 h-1.5 rounded-full bg-white/20" />
+          <div className="flex items-center gap-2">
+            <span className="text-white font-bold">{totalLocked} SOMI</span>{" "}
+            Total Locked
+          </div>
+          <div className="w-1.5 h-1.5 rounded-full bg-white/20" />
+          <div className="flex items-center gap-2">
+            <span className="text-white font-bold">3 Agents</span> Consensus
+          </div>
         </motion.div>
       </div>
     </section>
   );
-}
+};
+
+export default Hero;

@@ -238,7 +238,7 @@ export default function Home() {
             <About />
 
             {/* List Segment */}
-            <section className="py-12 border-t border-border-color">
+            <section id="escrows" className="py-12 border-t border-border-color">
               <div className="flex justify-between items-end mb-8">
                 <div>
                   <span className="text-xs uppercase font-mono tracking-wider text-clay">
