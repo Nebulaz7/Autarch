@@ -59,10 +59,10 @@ contract Autarch is IAgentRequesterHandler {
     IAgentRequester public immutable PLATFORM;
     address public arbiter;
 
-    // Agent IDs (Assumed standard for Somnia - can be configured)
-    uint256 public constant AGENT_JSON_API = 1;
-    uint256 public constant AGENT_LLM_PARSE = 2;
-    uint256 public constant AGENT_LLM_INFERENCE = 3;
+    // Official Somnia Testnet Agent IDs
+    uint256 public constant AGENT_JSON_API = 13174292974160097713;
+    uint256 public constant AGENT_LLM_PARSE = 12875401142070969085;
+    uint256 public constant AGENT_LLM_INFERENCE = 12847293847561029384;
 
     uint256 public constant DISPUTE_WINDOW = 24 hours;
 
