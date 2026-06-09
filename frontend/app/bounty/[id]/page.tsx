@@ -105,6 +105,17 @@ export default function BountyDetailPage({ params }: BountyDetailPageProps) {
     fetchSingleBounty();
   }, [bountyId, isTxSuccess]);
 
+  // Poll for updates every 10s while the bounty is under AI review
+  useEffect(() => {
+    if (!bounty || bounty.status !== BountyStatus.UnderReview) return;
+
+    const interval = setInterval(() => {
+      fetchSingleBounty();
+    }, 10_000);
+
+    return () => clearInterval(interval);
+  }, [bounty?.status]);
+
   // --- CONTRACT TRANSACTION TRIGGERS ---
   const handleRaiseDispute = async (bId: number) => {
     if (!isConnected) {

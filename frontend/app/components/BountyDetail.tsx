@@ -418,7 +418,9 @@ export default function BountyDetail({
               <div className="flex justify-between items-center py-2">
                 <span className="text-zinc-400">Human Arbiter</span>
                 <span className="font-mono text-foreground font-medium">
-                  0x342B39...1f04
+                  {truncateAddress(
+                    process.env.NEXT_PUBLIC_ARBITER_ADDRESS || "0x2092ea9023EdAD0ada446C1B6B8162d798876EfF"
+                  )}
                 </span>
               </div>
             </div>
