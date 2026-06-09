@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {IAgentRequester, Response} from "./interfaces/IAgentRequester.sol";
+import {IAgentRequester, IAgentRequesterHandler, Response, Request, ResponseStatus} from "./interfaces/IAgentRequester.sol";
 
-contract Autarch {
+contract Autarch is IAgentRequesterHandler {
     enum BountyStatus {
         Open,
         UnderReview,
@@ -146,7 +146,7 @@ contract Autarch {
         uint256 bountyId,
         string calldata prUrl,
         string calldata previewUrl
-    ) external {
+    ) external payable {
         Bounty storage b = _bounties[bountyId];
         if (b.status != BountyStatus.Open) revert InvalidState();
 
@@ -160,10 +160,24 @@ contract Autarch {
         // Step 1: Encode JSON API payload
         // NOTE: Standard payload assumption.
         bytes memory payload = abi.encode(prUrl);
-        uint256 requestId = PLATFORM.request(AGENT_JSON_API, payload);
+        
+        uint256 deposit = PLATFORM.getRequestDeposit();
+        if (msg.value < deposit) revert PaymentFailed();
+
+        uint256 requestId = PLATFORM.createRequest{value: deposit}(
+            AGENT_JSON_API,
+            address(this),
+            this.handleResponse.selector,
+            payload
+        );
 
         b.requestId = requestId;
         requestToBounty[requestId] = bountyId;
+
+        if (msg.value > deposit) {
+            (bool success, ) = msg.sender.call{value: msg.value - deposit}("");
+            require(success, "Refund failed");
+        }
 
         emit WorkSubmitted(bountyId, msg.sender, requestId);
     }
@@ -171,15 +185,19 @@ contract Autarch {
     /// @notice The callback function Somnia validators will call when consensus is reached
     function handleResponse(
         uint256 requestId,
-        Response[] memory responses
+        Response[] calldata responses,
+        ResponseStatus status,
+        Request calldata details
     ) external {
         if (msg.sender != address(PLATFORM)) revert NotAuthorized();
-        if (responses.length == 0 || !responses[0].success) {
-            _failBountySetupDispute(requestToBounty[requestId]);
+        
+        uint256 bountyId = requestToBounty[requestId];
+        
+        if (status != ResponseStatus.Success || responses.length == 0 || !responses[0].success) {
+            _failBountySetupDispute(bountyId);
             return;
         }
 
-        uint256 bountyId = requestToBounty[requestId];
         Bounty storage b = _bounties[bountyId];
 
         if (b.step == PipelineStep.FetchingDiff) {
@@ -187,7 +205,13 @@ contract Autarch {
             b.step = PipelineStep.ScrapingPreview;
 
             bytes memory payload = abi.encode(b.previewUrl);
-            uint256 newReqId = PLATFORM.request(AGENT_LLM_PARSE, payload);
+            uint256 deposit = PLATFORM.getRequestDeposit();
+            uint256 newReqId = PLATFORM.createRequest{value: deposit}(
+                AGENT_LLM_PARSE,
+                address(this),
+                this.handleResponse.selector,
+                payload
+            );
 
             b.requestId = newReqId;
             requestToBounty[newReqId] = bountyId;
@@ -197,7 +221,13 @@ contract Autarch {
             b.step = PipelineStep.Evaluating;
 
             bytes memory payload = abi.encode(b.spec, b.codeDiff, b.uiScrape);
-            uint256 newReqId = PLATFORM.request(AGENT_LLM_INFERENCE, payload);
+            uint256 deposit = PLATFORM.getRequestDeposit();
+            uint256 newReqId = PLATFORM.createRequest{value: deposit}(
+                AGENT_LLM_INFERENCE,
+                address(this),
+                this.handleResponse.selector,
+                payload
+            );
 
             b.requestId = newReqId;
             requestToBounty[newReqId] = bountyId;
@@ -267,4 +297,11 @@ contract Autarch {
 
         emit DisputeSettled(bountyId, approved);
     }
+
+    /// @notice Get the required STT deposit for making a submission
+    function getSubmissionDeposit() external view returns (uint256) {
+        return PLATFORM.getRequestDeposit();
+    }
+
+    receive() external payable {}
 }

@@ -1,20 +1,41 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+enum ResponseStatus {
+    Success,
+    Failed,
+    TimedOut
+}
+
 struct Response {
     bool success;
     bytes data;
 }
 
-interface IAgentRequester {
-    /// @notice Request execution from a Somnia agent
-    /// @param agentId The ID of the agent to invoke (e.g., JSON API, LLM Parse, LLM Inference)
-    /// @param payload The ABI-encoded parameters for the agent
-    /// @return requestId The unique ID of the request
-    function request(uint256 agentId, bytes calldata payload) external returns (uint256 requestId);
-
-    /// @notice The callback function Somnia validators will call when consensus is reached
-    /// @param requestId The ID of the request
-    /// @param responses The output of the agent execution
-    function handleResponse(uint256 requestId, Response[] memory responses) external;
+struct Request {
+    uint256 agentId;
+    address requester;
+    bytes4 callback;
+    bytes payload;
 }
+
+interface IAgentRequester {
+    function createRequest(
+        uint256 agentId,
+        address callbackAddress,
+        bytes4 callbackSelector,
+        bytes calldata payload
+    ) external payable returns (uint256 requestId);
+
+    function getRequestDeposit() external view returns (uint256 deposit);
+}
+
+interface IAgentRequesterHandler {
+    function handleResponse(
+        uint256 requestId,
+        Response[] calldata responses,
+        ResponseStatus status,
+        Request calldata details
+    ) external;
+}
+

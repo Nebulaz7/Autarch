@@ -26,7 +26,7 @@ contract AutorchArbiter {
     }
 
     constructor(address _autarch, address _trustedArbiter) {
-        autarch = Autarch(_autarch);
+        autarch = Autarch(payable(_autarch));
         trustedArbiter = _trustedArbiter;
     }
 

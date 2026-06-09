@@ -33,8 +33,9 @@ contract DeployScript is Script {
             trustedArbiter
         );
 
-        // 2. Deploy Autarch core with Somnia Platform interface and Arbiter
-        Autarch autarch = new Autarch(platformAddress, address(arbiter));
+        // 2. Deploy Autarch core with Somnia Platform interface
+        Autarch autarch = new Autarch(platformAddress);
+        autarch.setArbiter(address(arbiter));
 
         // Let's verify that the precomputed address matches the actual deployed address
         // If it doesn't, Somnia's nonce logic might be slightly different than default EVM

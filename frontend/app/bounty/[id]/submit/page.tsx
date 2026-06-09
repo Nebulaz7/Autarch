@@ -50,6 +50,7 @@ export default function SubmitWorkPage({ params }: SubmitPageProps) {
   const [error, setError] = useState("");
   const [bountySpec, setBountySpec] = useState("");
   const [bountyAmount, setBountyAmount] = useState("");
+  const [submissionDeposit, setSubmissionDeposit] = useState<bigint>(BigInt(0));
   const [loadingBounty, setLoadingBounty] = useState(true);
   const isLoading = isPending || isTxConfirming;
 
@@ -73,6 +74,13 @@ export default function SubmitWorkPage({ params }: SubmitPageProps) {
         setBountySpec(data.spec);
         setBountyAmount(formatEther(data.amount));
       }
+
+      const deposit = (await publicClient.readContract({
+        address: AUTARCH_ADDRESS,
+        abi: AUTARCH_ABI,
+        functionName: "getSubmissionDeposit",
+      })) as bigint;
+      setSubmissionDeposit(deposit);
     } catch (e) {
       console.error("Error reading bounty details for submission page:", e);
     } finally {
@@ -121,6 +129,7 @@ export default function SubmitWorkPage({ params }: SubmitPageProps) {
         abi: AUTARCH_ABI,
         functionName: "submitWork",
         args: [BigInt(bountyId), prUrl, previewUrl],
+        value: submissionDeposit,
       });
     } catch (err) {
       console.error("Submit work transaction failed:", err);
@@ -261,6 +270,19 @@ export default function SubmitWorkPage({ params }: SubmitPageProps) {
                 consensus checks.
               </div>
             </div>
+
+            {/* Deposit Information */}
+            {submissionDeposit > BigInt(0) && (
+              <div className="p-4 border border-amber-200 bg-amber-50 dark:bg-zinc-900 dark:border-zinc-800 flex gap-3 text-xs text-amber-800 dark:text-amber-500 leading-relaxed rounded-md">
+                <Coins className="w-5 h-5 text-clay shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-semibold">Somnia Agent Deposit Required:</span>{" "}
+                  This transaction requires a deposit of{" "}
+                  <strong>{formatEther(submissionDeposit)} STT</strong> (SOMI) to fund the L1 AI agents
+                  (JSON API, LLM Parse, and LLM Inference). Any unused portion of this deposit will be refunded automatically when the verification process completes.
+                </div>
+              </div>
+            )}
 
             {/* Action Buttons */}
             <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-border-color">

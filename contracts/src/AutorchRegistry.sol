@@ -13,7 +13,7 @@ contract AutorchRegistry {
     event BountyRegistered(uint256 indexed bountyId);
 
     constructor(address _autarch) {
-        autarch = Autarch(_autarch);
+        autarch = Autarch(payable(_autarch));
     }
 
     /// @notice Used to index or feature a specific bounty on the frontend
