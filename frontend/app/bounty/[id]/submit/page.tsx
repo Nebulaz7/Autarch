@@ -10,7 +10,14 @@ import {
 import { createPublicClient, http, formatEther } from "viem";
 import { somniaTestnet } from "@/config";
 import { AUTARCH_ABI } from "../../../lib/abis";
-import { GitPullRequest, Eye, HelpCircle, ArrowLeft, Coins } from "lucide-react";
+import {
+  GitPullRequest,
+  Eye,
+  HelpCircle,
+  ArrowLeft,
+  Coins,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // Import components
 import Navbar from "../../../components/Navbar";
@@ -97,8 +104,13 @@ export default function SubmitWorkPage({ params }: SubmitPageProps) {
       return;
     }
 
-    if (!previewUrl.trim() || (!previewUrl.startsWith("http://") && !previewUrl.startsWith("https://"))) {
-      setError("A valid live preview URL starting with http:// or https:// is required");
+    if (
+      !previewUrl.trim() ||
+      (!previewUrl.startsWith("http://") && !previewUrl.startsWith("https://"))
+    ) {
+      setError(
+        "A valid live preview URL starting with http:// or https:// is required",
+      );
       return;
     }
 
@@ -122,7 +134,6 @@ export default function SubmitWorkPage({ params }: SubmitPageProps) {
 
       {/* Main Body */}
       <main className="flex-1 max-w-3xl w-full mx-auto px-6 py-8">
-        
         {/* Back Button */}
         <button
           onClick={() => router.push(`/bounty/${bountyId}`)}
@@ -136,32 +147,42 @@ export default function SubmitWorkPage({ params }: SubmitPageProps) {
         {isTxConfirming && (
           <div className="my-4 p-4 border border-amber-200 bg-amber-50 dark:border-zinc-800 dark:bg-zinc-950 rounded-lg flex items-center gap-3 text-xs font-mono text-amber-700 dark:text-amber-500">
             <span className="h-2 w-2 rounded-full bg-amber-500 animate-ping" />
-            <span>Somnia Transaction Confirming on-chain... Routing back soon.</span>
+            <span>
+              Somnia Transaction Confirming on-chain... Routing back soon.
+            </span>
           </div>
         )}
 
         <div className="p-8 bg-card-bg thin-border rounded-lg shadow-sm">
           {/* Header */}
           <div className="border-b border-border-color pb-6 mb-6">
-            <span className="font-mono text-xs text-zinc-400">Escrow Account #{bountyId}</span>
+            <span className="font-mono text-xs text-zinc-400">
+              Escrow Account #{bountyId}
+            </span>
             <h1 className="font-serif text-2xl sm:text-3xl font-normal leading-tight text-foreground tracking-tight mt-1">
               Submit Work Delivery
             </h1>
-            
+
             {/* Escrow summary context box */}
             {!loadingBounty && bountySpec && (
               <div className="mt-4 p-4 bg-background thin-border rounded-md flex justify-between items-start gap-4">
                 <div className="flex-1">
-                  <span className="text-[10px] font-mono uppercase text-zinc-400">Specification</span>
+                  <span className="text-[10px] font-mono uppercase text-zinc-400">
+                    Specification
+                  </span>
                   <p className="font-serif text-sm italic text-zinc-600 dark:text-zinc-300 line-clamp-2 mt-1">
                     "{bountySpec}"
                   </p>
                 </div>
                 <div className="text-right shrink-0">
-                  <span className="text-[10px] font-mono uppercase text-zinc-400 block">Reward</span>
+                  <span className="text-[10px] font-mono uppercase text-zinc-400 block">
+                    Reward
+                  </span>
                   <div className="flex items-center gap-1 mt-1">
                     <Coins className="w-3.5 h-3.5 text-clay" />
-                    <span className="font-mono text-foreground font-semibold">{bountyAmount} SOMI</span>
+                    <span className="font-mono text-foreground font-semibold">
+                      {bountyAmount} SOMI
+                    </span>
                   </div>
                 </div>
               </div>
@@ -190,12 +211,13 @@ export default function SubmitWorkPage({ params }: SubmitPageProps) {
                   placeholder="https://github.com/org/repo/pull/42"
                   value={prUrl}
                   onChange={(e) => setPrUrl(e.target.value)}
-                  className="w-full pl-9 pr-4 py-3 text-sm bg-card-bg thin-border rounded-md focus:outline-none focus:ring-1 focus:ring-clay focus:border-clay transition-all text-foreground"
+                  className="w-full pl-9 pr-4 py-3 text-sm bg-card-bg border border-foreground rounded-md focus:outline-none focus:ring-1 focus:ring-clay focus:border-clay transition-all text-foreground"
                   required
                 />
               </div>
               <p className="text-[10px] text-zinc-400 leading-normal">
-                The git code diff of the changes will be fetched by the Somnia API Agent.
+                The git code diff of the changes will be fetched by the Somnia
+                API Agent.
               </p>
             </div>
 
@@ -213,20 +235,27 @@ export default function SubmitWorkPage({ params }: SubmitPageProps) {
                   placeholder="https://my-preview-link.vercel.app"
                   value={previewUrl}
                   onChange={(e) => setPreviewUrl(e.target.value)}
-                  className="w-full pl-9 pr-4 py-3 text-sm bg-card-bg thin-border rounded-md focus:outline-none focus:ring-1 focus:ring-clay focus:border-clay transition-all text-foreground"
+                  className="w-full pl-9 pr-4 py-3 text-sm bg-card-bg border border-foreground rounded-md focus:outline-none focus:ring-1 focus:ring-clay focus:border-clay transition-all text-foreground"
                   required
                 />
               </div>
               <p className="text-[10px] text-zinc-400 leading-normal">
-                The live interface layout of the deployment will be fetched by the Somnia Headless Crawler.
+                The live interface layout of the deployment will be fetched by
+                the Somnia Headless Crawler.
               </p>
             </div>
 
             {/* Warning / Instruction */}
-            <div className="p-4 rounded border border-[#e8dcc4] bg-[#fdfaf2] dark:border-zinc-800 dark:bg-zinc-950 flex gap-3 text-xs text-zinc-500 leading-relaxed">
+            <div className="p-4 border border-foreground bg-background flex gap-3 text-xs text-foreground leading-relaxed">
               <HelpCircle className="w-6 h-6 text-[#d97757] shrink-0 mt-0.5" />
               <div>
-                <span className="font-semibold text-foreground">Triggering AI Pipelines:</span> After submitting, the smart contract automatically schedules the 3-step AI agent verification flow. This in-memory evaluation takes ~8 seconds to simulate and logs real-time console consensus checks.
+                <span className="font-semibold text-foreground">
+                  Triggering AI Pipelines:
+                </span>{" "}
+                After submitting, the smart contract automatically schedules the
+                3-step AI agent verification flow. This in-memory evaluation
+                takes ~8 seconds to simulate and logs real-time console
+                consensus checks.
               </div>
             </div>
 
@@ -239,12 +268,12 @@ export default function SubmitWorkPage({ params }: SubmitPageProps) {
               >
                 Cancel
               </button>
-              <button
+              <Button
                 type="submit"
-                className="px-5 py-2.5 bg-[#191919] hover:bg-zinc-800 text-[#fbf9f6] dark:bg-[#f5f5f5] dark:text-[#141413] dark:hover:bg-zinc-200 text-xs font-mono uppercase tracking-wider rounded transition-colors"
+                className="hover:text-black transition hidden lg:block"
               >
                 Submit Work & Verify
-              </button>
+              </Button>
             </div>
           </form>
         </div>
