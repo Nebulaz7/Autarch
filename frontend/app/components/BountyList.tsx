@@ -105,7 +105,7 @@ export default function BountyList({
               onClick={() => setActiveFilter(filter)}
               className={`px-3.5 py-1.5 text-xs font-medium rounded capitalize whitespace-nowrap transition-all ${
                 activeFilter === filter
-                  ? "bg-background shadow-sm text-foreground thin-border"
+                  ? "bg-foreground shadow-sm text-background thin-border"
                   : "text-zinc-500 hover:text-foreground"
               }`}
             >
@@ -124,7 +124,7 @@ export default function BountyList({
             placeholder="Search spec, address, or ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-sm bg-card-bg thin-border rounded-md focus:outline-none focus:ring-1 focus:ring-clay focus:border-clay transition-all"
+            className="w-full pl-9 pr-4 py-2 text-sm bg-card-bg border rounded-md focus:outline-none focus:ring-1 focus:ring-clay focus:border-clay transition-all"
           />
         </div>
       </div>
@@ -144,7 +144,7 @@ export default function BountyList({
               <div
                 key={bounty.id}
                 onClick={() => onSelectBounty(bounty)}
-                className="bg-card-bg thin-border rounded-lg p-6 flex flex-col justify-between h-[300px] cursor-pointer hover:border-zinc-400 dark:hover:border-zinc-600 transition-all duration-200 group"
+                className="bg-card-bg border rounded-lg p-6 flex flex-col justify-between h-[300px] cursor-pointer border-grey-400 hover:border-grey-200 transition-all duration-200 group"
               >
                 <div>
                   {/* Top Bar */}

@@ -2,20 +2,21 @@
 
 import React from "react";
 import { Layers } from "lucide-react";
+import Link from "next/link";
 
 export default function Footer() {
   return (
     <footer className="bg-background border-t border-border-color py-12 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-        
         {/* Left Side Logo */}
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-[#191919] dark:bg-[#F5F5F5] flex items-center justify-center">
-            <Layers className="w-3.5 h-3.5 text-background" />
-          </div>
-          <span className="font-serif text-lg font-semibold tracking-tight text-foreground">
-            AUTARCH
-          </span>
+          <Link
+            href="/"
+            className="font-bold text-xl tracking-tight text-foreground z-50 flex items-center gap-1 font-syne"
+          >
+            <span className="text-clay">{`{`}</span> autarch{" "}
+            <span className="text-clay">{`}`}</span>
+          </Link>
         </div>
 
         {/* Links */}
@@ -37,20 +38,20 @@ export default function Footer() {
             Somnia Block Explorer
           </a>
           <a
-            href="https://cloud.reown.com"
+            href="https://github.com/Nebulaz7/Autarch"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-foreground transition-colors"
           >
-            Reown Cloud Dashboard
+            Github
           </a>
         </div>
 
         {/* Copyright */}
         <div className="font-mono text-[10px] text-zinc-400">
-          &copy; {new Date().getFullYear()} Autarch Protocol. All rights reserved.
+          &copy; {new Date().getFullYear()} Autarch Protocol. All rights
+          reserved.
         </div>
-
       </div>
     </footer>
   );

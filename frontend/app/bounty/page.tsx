@@ -20,6 +20,7 @@ import Footer from "../components/Footer";
 // Import custom types
 import { Bounty, BountyStatus, PipelineStep } from "../hooks/useSandbox";
 import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // Deployed Addresses
 const AUTARCH_ADDRESS = (process.env.NEXT_PUBLIC_AUTARCH_ADDRESS ||
@@ -153,13 +154,13 @@ export default function BountyExplorer() {
                 Explore Escrow Agreements
               </h2>
             </div>
-            <button
+            <Button
               onClick={() => setCreateModalOpen(true)}
-              className="px-5 py-2.5 bg-[#191919] hover:bg-zinc-800 text-[#fbf9f6] dark:bg-[#f5f5f5] dark:text-[#141413] dark:hover:bg-zinc-200 text-xs font-mono uppercase tracking-wider rounded flex items-center gap-2 transition-all shadow-sm"
+              className="hover:text-black transition hidden lg:block"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="inline-block w-4 h-4 mr-1 mb-0.5" />
               Post New Escrow
-            </button>
+            </Button>
           </div>
 
           {bountiesLoading ? (

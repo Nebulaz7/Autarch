@@ -17,7 +17,7 @@ const Hero = ({ bountiesCount, totalLocked }: HeroProps) => {
       <div className="absolute inset-0 z-0 opacity-50 flex items-center justify-center">
         <div className="w-full h-full max-w-7xl max-h-[1024px]">
           <MagicRings
-            color="#58A0B4"
+            color="#D97757"
             colorTwo="#FFFFFF"
             ringCount={6}
             speed={1}
@@ -61,9 +61,9 @@ const Hero = ({ bountiesCount, totalLocked }: HeroProps) => {
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
           className="text-3xl md:text-5xl font-syne tracking-tight text-white leading-tight"
         >
-          <span className="font-bold">Code</span> shouldn't just be{" "}
-          <span className="font-bold">Written</span>, it should be{" "}
-          <span className="font-bold">Verified</span>.
+          <span className="font-bold text-clay">Code</span> shouldn't just be{" "}
+          <span className="font-bold text-clay">Written</span>, it should be{" "}
+          <span className="font-bold text-clay">Verified</span>.
         </motion.h1>
 
         {/* Subheading */}
@@ -108,17 +108,17 @@ const Hero = ({ bountiesCount, totalLocked }: HeroProps) => {
           className="flex flex-wrap items-center justify-center gap-8 pt-8 text-xs font-mono uppercase tracking-wider text-gray-400"
         >
           <div className="flex items-center gap-2">
-            <span className="text-white font-bold">{bountiesCount}</span> Active
+            <span className="font-bold text-clay">{bountiesCount}</span> Active
             Bounties
           </div>
           <div className="w-1.5 h-1.5 rounded-full bg-white/20" />
           <div className="flex items-center gap-2">
-            <span className="text-white font-bold">{totalLocked} SOMI</span>{" "}
+            <span className="font-bold text-clay">{totalLocked} SOMI</span>{" "}
             Total Locked
           </div>
           <div className="w-1.5 h-1.5 rounded-full bg-white/20" />
           <div className="flex items-center gap-2">
-            <span className="text-white font-bold">3 Agents</span> Consensus
+            <span className="font-bold text-clay">3 Agents</span> Consensus
           </div>
         </motion.div>
       </div>

@@ -24,7 +24,8 @@ export default function Navbar() {
               href="/"
               className="font-bold text-xl tracking-tight text-foreground z-50 flex items-center gap-1 font-syne"
             >
-              {`{`} autarch {`}`}
+              <span className="text-clay">{`{`}</span> autarch{" "}
+              <span className="text-clay">{`}`}</span>
             </Link>
             <span className="hidden sm:inline-block font-mono text-[9px] uppercase border border-border-color px-1.5 py-0.5 rounded text-zinc-500">
               v1.0.0
@@ -50,7 +51,8 @@ export default function Navbar() {
               onClick={() => (window.location.href = "/bounty")}
               className="hover:text-black transition hidden lg:block"
             >
-              <Plus className="inline-block w-4 h-4 mr-2" /> Create Bounty
+              <Plus className="inline-block w-4 h-4 mr-1 mb-0.5" />
+              Create Bounty
             </Button>
             {/* Reown AppKit Button */}
             <div className="hidden sm:block">
