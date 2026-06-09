@@ -32,7 +32,7 @@ export default function BountyExplorer() {
 
   // Wagmi/Web3 wallet details
   const { isConnected } = useAccount();
-  const { writeContract, data: txHash } = useWriteContract();
+  const { writeContract, data: txHash, isPending } = useWriteContract();
   const { isLoading: isTxConfirming, isSuccess: isTxSuccess } =
     useWaitForTransactionReceipt({
       hash: txHash,
@@ -106,6 +106,9 @@ export default function BountyExplorer() {
 
   useEffect(() => {
     fetchRealBounties();
+    if (isTxSuccess) {
+      setCreateModalOpen(false);
+    }
   }, [isTxSuccess]);
 
   // --- CONTRACT TRANSACTION TRIGGERS ---
@@ -184,6 +187,8 @@ export default function BountyExplorer() {
         isOpen={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
         onSubmit={handleCreateBounty}
+        isPending={isPending}
+        isConfirming={isTxConfirming}
       />
 
       {/* Bottom Footer */}

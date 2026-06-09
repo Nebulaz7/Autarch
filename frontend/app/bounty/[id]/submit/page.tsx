@@ -38,7 +38,7 @@ export default function SubmitWorkPage({ params }: SubmitPageProps) {
 
   // Wagmi/Web3 wallet details
   const { isConnected } = useAccount();
-  const { writeContract, data: txHash } = useWriteContract();
+  const { writeContract, data: txHash, isPending } = useWriteContract();
   const { isLoading: isTxConfirming, isSuccess: isTxSuccess } =
     useWaitForTransactionReceipt({
       hash: txHash,
@@ -51,6 +51,7 @@ export default function SubmitWorkPage({ params }: SubmitPageProps) {
   const [bountySpec, setBountySpec] = useState("");
   const [bountyAmount, setBountyAmount] = useState("");
   const [loadingBounty, setLoadingBounty] = useState(true);
+  const isLoading = isPending || isTxConfirming;
 
   // Initialize public client for Somnia Testnet
   const publicClient = createPublicClient({
@@ -210,8 +211,9 @@ export default function SubmitWorkPage({ params }: SubmitPageProps) {
                   type="text"
                   placeholder="https://github.com/org/repo/pull/42"
                   value={prUrl}
+                  disabled={isLoading}
                   onChange={(e) => setPrUrl(e.target.value)}
-                  className="w-full pl-9 pr-4 py-3 text-sm bg-card-bg border border-foreground rounded-md focus:outline-none focus:ring-1 focus:ring-clay focus:border-clay transition-all text-foreground"
+                  className="w-full pl-9 pr-4 py-3 text-sm bg-card-bg border border-foreground rounded-md focus:outline-none focus:ring-1 focus:ring-clay focus:border-clay transition-all text-foreground disabled:opacity-60"
                   required
                 />
               </div>
@@ -234,8 +236,9 @@ export default function SubmitWorkPage({ params }: SubmitPageProps) {
                   type="text"
                   placeholder="https://my-preview-link.vercel.app"
                   value={previewUrl}
+                  disabled={isLoading}
                   onChange={(e) => setPreviewUrl(e.target.value)}
-                  className="w-full pl-9 pr-4 py-3 text-sm bg-card-bg border border-foreground rounded-md focus:outline-none focus:ring-1 focus:ring-clay focus:border-clay transition-all text-foreground"
+                  className="w-full pl-9 pr-4 py-3 text-sm bg-card-bg border border-foreground rounded-md focus:outline-none focus:ring-1 focus:ring-clay focus:border-clay transition-all text-foreground disabled:opacity-60"
                   required
                 />
               </div>
@@ -264,15 +267,29 @@ export default function SubmitWorkPage({ params }: SubmitPageProps) {
               <button
                 type="button"
                 onClick={() => router.push(`/bounty/${bountyId}`)}
-                className="px-4 py-2 bg-card-bg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-mono uppercase tracking-wider rounded thin-border transition-colors"
+                disabled={isLoading}
+                className="px-4 py-2 bg-card-bg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-mono uppercase tracking-wider rounded thin-border transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
               <Button
                 type="submit"
-                className="hover:text-black transition hidden lg:block"
+                disabled={isLoading}
+                className="hover:text-black transition disabled:opacity-50 flex items-center gap-1.5"
               >
-                Submit Work & Verify
+                {isPending ? (
+                  <>
+                    <div className="h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" />
+                    Signing...
+                  </>
+                ) : isTxConfirming ? (
+                  <>
+                    <div className="h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" />
+                    Confirming...
+                  </>
+                ) : (
+                  "Submit Work & Verify"
+                )}
               </Button>
             </div>
           </form>

@@ -7,12 +7,31 @@ interface CreateBountyModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (spec: string, amount: string) => void;
+  isPending?: boolean;
+  isConfirming?: boolean;
 }
 
-export default function CreateBountyModal({ isOpen, onClose, onSubmit }: CreateBountyModalProps) {
+export default function CreateBountyModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  isPending = false,
+  isConfirming = false,
+}: CreateBountyModalProps) {
   const [spec, setSpec] = useState("");
   const [amount, setAmount] = useState("");
   const [error, setError] = useState("");
+
+  const isLoading = isPending || isConfirming;
+
+  // Reset form when modal closes
+  React.useEffect(() => {
+    if (!isOpen) {
+      setSpec("");
+      setAmount("");
+      setError("");
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -31,9 +50,6 @@ export default function CreateBountyModal({ isOpen, onClose, onSubmit }: CreateB
     }
 
     onSubmit(spec, amount);
-    setSpec("");
-    setAmount("");
-    onClose();
   };
 
   return (
@@ -45,7 +61,8 @@ export default function CreateBountyModal({ isOpen, onClose, onSubmit }: CreateB
           <span className="font-serif text-lg font-medium text-foreground">Create New Escrow</span>
           <button
             onClick={onClose}
-            className="p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+            disabled={isLoading}
+            className="p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors disabled:opacity-50"
           >
             <X className="w-4 h-4 text-zinc-500" />
           </button>
@@ -67,10 +84,11 @@ export default function CreateBountyModal({ isOpen, onClose, onSubmit }: CreateB
             </label>
             <textarea
               rows={4}
+              disabled={isLoading}
               placeholder="e.g., Implement a responsive sidebar with three sub-menus matching the design mockup colors (#191919). The sidebar must collapse correctly on mobile layouts below 768px..."
               value={spec}
               onChange={(e) => setSpec(e.target.value)}
-              className="w-full p-3 text-sm bg-card-bg thin-border rounded-md focus:outline-none focus:ring-1 focus:ring-clay focus:border-clay transition-all placeholder:text-zinc-400 text-foreground"
+              className="w-full p-3 text-sm bg-card-bg thin-border rounded-md focus:outline-none focus:ring-1 focus:ring-clay focus:border-clay transition-all placeholder:text-zinc-400 text-foreground disabled:opacity-60"
             />
             <p className="text-[10px] text-zinc-400 leading-normal flex items-start gap-1">
               <HelpCircle className="w-3 h-3 text-zinc-400 mt-0.5" />
@@ -89,10 +107,11 @@ export default function CreateBountyModal({ isOpen, onClose, onSubmit }: CreateB
               </span>
               <input
                 type="text"
+                disabled={isLoading}
                 placeholder="0.25"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="w-full pl-9 pr-16 py-2.5 text-sm bg-card-bg thin-border rounded-md focus:outline-none focus:ring-1 focus:ring-clay focus:border-clay transition-all text-foreground"
+                className="w-full pl-9 pr-16 py-2.5 text-sm bg-card-bg thin-border rounded-md focus:outline-none focus:ring-1 focus:ring-clay focus:border-clay transition-all text-foreground disabled:opacity-60"
               />
               <span className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-xs font-mono text-zinc-500">
                 SOMI
@@ -108,15 +127,29 @@ export default function CreateBountyModal({ isOpen, onClose, onSubmit }: CreateB
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-card-bg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-mono uppercase tracking-wider rounded thin-border transition-colors"
+              disabled={isLoading}
+              className="px-4 py-2 bg-card-bg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-mono uppercase tracking-wider rounded thin-border transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2.5 bg-[#191919] hover:bg-zinc-800 text-[#fbf9f6] dark:bg-[#f5f5f5] dark:text-[#141413] dark:hover:bg-zinc-200 text-xs font-mono uppercase tracking-wider rounded transition-colors"
+              disabled={isLoading}
+              className="px-5 py-2.5 bg-[#191919] hover:bg-zinc-800 text-[#fbf9f6] dark:bg-[#f5f5f5] dark:text-[#141413] dark:hover:bg-zinc-200 text-xs font-mono uppercase tracking-wider rounded transition-colors disabled:opacity-50 flex items-center gap-2"
             >
-              Lock Funds & Create
+              {isPending ? (
+                <>
+                  <div className="h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" />
+                  Signing...
+                </>
+              ) : isConfirming ? (
+                <>
+                  <div className="h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" />
+                  Confirming...
+                </>
+              ) : (
+                "Lock Funds & Create"
+              )}
             </button>
           </div>
 

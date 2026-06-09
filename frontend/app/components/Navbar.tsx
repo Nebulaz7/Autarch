@@ -40,9 +40,9 @@ export default function Navbar() {
             <Link href="/bounty" className="hover:text-foreground transition">
               Active Bounties
             </Link>
-            <a href="/dashboard" className="hover:text-foreground transition">
+            <Link href="/dashboard" className="hover:text-foreground transition">
               Dashboard
-            </a>
+            </Link>
           </div>
 
           {/* Right: Connect Wallet & Mobile Toggle */}
