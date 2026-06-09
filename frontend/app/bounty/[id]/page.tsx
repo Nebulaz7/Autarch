@@ -105,13 +105,13 @@ export default function BountyDetailPage({ params }: BountyDetailPageProps) {
     fetchSingleBounty();
   }, [bountyId, isTxSuccess]);
 
-  // Poll for updates every 10s while the bounty is under AI review
+  // Poll for updates every 30s while the bounty is under AI review
   useEffect(() => {
     if (!bounty || bounty.status !== BountyStatus.UnderReview) return;
 
     const interval = setInterval(() => {
       fetchSingleBounty();
-    }, 10_000);
+    }, 30_000);
 
     return () => clearInterval(interval);
   }, [bounty?.status]);
@@ -177,9 +177,12 @@ export default function BountyDetailPage({ params }: BountyDetailPageProps) {
           </div>
         ) : bounty === null ? (
           <div className="py-20 text-center thin-border rounded-lg bg-card-bg">
-            <h2 className="text-xl font-serif text-foreground">Escrow Not Found</h2>
+            <h2 className="text-xl font-serif text-foreground">
+              Escrow Not Found
+            </h2>
             <p className="text-xs text-zinc-500 mt-3 font-mono">
-              The requested escrow contract does not exist or has invalid states.
+              The requested escrow contract does not exist or has invalid
+              states.
             </p>
             <button
               onClick={() => router.push("/bounty")}
