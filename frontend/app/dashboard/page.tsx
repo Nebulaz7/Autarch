@@ -42,7 +42,9 @@ export default function DashboardPage() {
   const [error, setError] = useState("");
   const [bounties, setBounties] = useState<Bounty[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"listed" | "participated">("listed");
+  const [activeTab, setActiveTab] = useState<"listed" | "participated">(
+    "listed",
+  );
 
   // Initialize public client for rapid queries
   const publicClient = createPublicClient({
@@ -192,12 +194,16 @@ export default function DashboardPage() {
 
     bounties.forEach((b) => {
       const isPoster = b.poster.toLowerCase() === userAddress.toLowerCase();
-      const isDev = b.developer && b.developer.toLowerCase() === userAddress.toLowerCase();
+      const isDev =
+        b.developer && b.developer.toLowerCase() === userAddress.toLowerCase();
       const amountNum = Number(b.amount);
 
       if (isPoster) {
         listedCount++;
-        if (b.status === BountyStatus.Passed || b.status === BountyStatus.Settled) {
+        if (
+          b.status === BountyStatus.Passed ||
+          b.status === BountyStatus.Settled
+        ) {
           // If status is Passed or Settled, the funds are paid to developer (spent)
           // Note: In case of arbiter dispute reject, it refunds back to poster (so not spent)
           // Since b.amount is set to 0 in both cases, we look at the developer.
@@ -216,7 +222,10 @@ export default function DashboardPage() {
 
       if (isDev) {
         participatedCount++;
-        if (b.status === BountyStatus.Passed || b.status === BountyStatus.Settled) {
+        if (
+          b.status === BountyStatus.Passed ||
+          b.status === BountyStatus.Settled
+        ) {
           receivedVal += amountNum;
         }
       }
@@ -264,7 +273,7 @@ export default function DashboardPage() {
       (b) =>
         b.poster.toLowerCase() === userAddress.toLowerCase() &&
         (b.spec.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          b.id.toString() === searchQuery)
+          b.id.toString() === searchQuery),
     );
   }, [bounties, userAddress, searchQuery]);
 
@@ -275,7 +284,7 @@ export default function DashboardPage() {
         b.developer &&
         b.developer.toLowerCase() === userAddress.toLowerCase() &&
         (b.spec.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          b.id.toString() === searchQuery)
+          b.id.toString() === searchQuery),
     );
   }, [bounties, userAddress, searchQuery]);
 
@@ -298,7 +307,9 @@ export default function DashboardPage() {
               Unlock Your Escrow Dashboard
             </h1>
             <p className="text-zinc-500 text-sm leading-relaxed mb-8">
-              Connect your Web3 wallet to access your personalized developer portal, view live AI validation streams, and monitor payouts on the Somnia Testnet.
+              Connect your Web3 wallet to access your personalized developer
+              portal, view live AI validation streams, and monitor payouts on
+              the Somnia Testnet.
             </p>
 
             <div className="p-1 border border-border-color bg-card-bg rounded-md mb-8 w-full max-w-sm">
@@ -309,18 +320,33 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-left w-full mt-6 border-t border-border-color pt-8">
               <div>
                 <span className="font-mono text-xs text-clay">01</span>
-                <h3 className="font-semibold text-sm text-foreground mt-1">Direct Escrows</h3>
-                <p className="text-zinc-400 text-xs mt-1 leading-normal">Lock funding safely on-chain using Solidity smart contract protocols.</p>
+                <h3 className="font-semibold text-sm text-foreground mt-1">
+                  Direct Escrows
+                </h3>
+                <p className="text-zinc-400 text-xs mt-1 leading-normal">
+                  Lock funding safely on-chain using Solidity smart contract
+                  protocols.
+                </p>
               </div>
               <div>
                 <span className="font-mono text-xs text-clay">02</span>
-                <h3 className="font-semibold text-sm text-foreground mt-1">AI Agent Validation</h3>
-                <p className="text-zinc-400 text-xs mt-1 leading-normal">Deterministic multi-agent pipeline validates PRs and UI layout diffs instantly.</p>
+                <h3 className="font-semibold text-sm text-foreground mt-1">
+                  AI Agent Validation
+                </h3>
+                <p className="text-zinc-400 text-xs mt-1 leading-normal">
+                  Deterministic multi-agent pipeline validates PRs and UI layout
+                  diffs instantly.
+                </p>
               </div>
               <div>
                 <span className="font-mono text-xs text-clay">03</span>
-                <h3 className="font-semibold text-sm text-foreground mt-1">Autonomous Payouts</h3>
-                <p className="text-zinc-400 text-xs mt-1 leading-normal">Funds automatically release directly to developers upon verified criteria approval.</p>
+                <h3 className="font-semibold text-sm text-foreground mt-1">
+                  Autonomous Payouts
+                </h3>
+                <p className="text-zinc-400 text-xs mt-1 leading-normal">
+                  Funds automatically release directly to developers upon
+                  verified criteria approval.
+                </p>
               </div>
             </div>
           </div>
@@ -340,7 +366,9 @@ export default function DashboardPage() {
               {/* Wallet Info Panel */}
               <div className="flex items-center gap-3 bg-card-bg thin-border px-4 py-2.5 rounded-lg shadow-sm">
                 <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="font-mono text-xs text-zinc-400">Connected:</span>
+                <span className="font-mono text-xs text-zinc-400">
+                  Connected:
+                </span>
                 <span className="font-mono text-xs font-semibold text-foreground">
                   {truncate(userAddress || "")}
                 </span>
@@ -370,39 +398,53 @@ export default function DashboardPage() {
               {/* Card 1: Listed */}
               <div className="bg-card-bg thin-border rounded-lg p-5 flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
                 <div className="flex justify-between items-start">
-                  <span className="text-xs font-mono uppercase tracking-wider text-zinc-400">Listed</span>
+                  <span className="text-xs font-mono uppercase tracking-wider text-zinc-400">
+                    Listed
+                  </span>
                   <Upload className="w-4 h-4 text-zinc-400" />
                 </div>
                 <div className="mt-4">
                   {loading ? (
                     <div className="h-8 w-12 bg-zinc-200 dark:bg-zinc-800 animate-pulse rounded" />
                   ) : (
-                    <div className="font-serif text-3xl font-medium text-foreground">{stats.listed}</div>
+                    <div className="font-serif text-3xl font-medium text-foreground">
+                      {stats.listed}
+                    </div>
                   )}
-                  <span className="text-[10px] text-zinc-500 font-mono mt-1 block">Bounties Posted</span>
+                  <span className="text-[10px] text-zinc-500 font-mono mt-1 block">
+                    Bounties Posted
+                  </span>
                 </div>
               </div>
 
               {/* Card 2: Participated */}
               <div className="bg-card-bg thin-border rounded-lg p-5 flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
                 <div className="flex justify-between items-start">
-                  <span className="text-xs font-mono uppercase tracking-wider text-zinc-400">Participated</span>
+                  <span className="text-xs font-mono uppercase tracking-wider text-zinc-400">
+                    Participated
+                  </span>
                   <Download className="w-4 h-4 text-zinc-400" />
                 </div>
                 <div className="mt-4">
                   {loading ? (
                     <div className="h-8 w-12 bg-zinc-200 dark:bg-zinc-800 animate-pulse rounded" />
                   ) : (
-                    <div className="font-serif text-3xl font-medium text-foreground">{stats.participated}</div>
+                    <div className="font-serif text-3xl font-medium text-foreground">
+                      {stats.participated}
+                    </div>
                   )}
-                  <span className="text-[10px] text-zinc-500 font-mono mt-1 block">Deliveries Sent</span>
+                  <span className="text-[10px] text-zinc-500 font-mono mt-1 block">
+                    Deliveries Sent
+                  </span>
                 </div>
               </div>
 
               {/* Card 3: Spent */}
               <div className="bg-card-bg thin-border rounded-lg p-5 flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
                 <div className="flex justify-between items-start">
-                  <span className="text-xs font-mono uppercase tracking-wider text-zinc-400">Spent Payouts</span>
+                  <span className="text-xs font-mono uppercase tracking-wider text-zinc-400">
+                    Spent Payouts
+                  </span>
                   <Coins className="w-4 h-4 text-clay" />
                 </div>
                 <div className="mt-4">
@@ -410,17 +452,24 @@ export default function DashboardPage() {
                     <div className="h-8 w-24 bg-zinc-200 dark:bg-zinc-800 animate-pulse rounded" />
                   ) : (
                     <div className="font-serif text-2xl font-semibold text-foreground flex items-baseline gap-1">
-                      {stats.spent} <span className="text-xs font-mono font-normal text-zinc-500">SOMI</span>
+                      {stats.spent}{" "}
+                      <span className="text-xs font-mono font-normal text-zinc-500">
+                        SOMI
+                      </span>
                     </div>
                   )}
-                  <span className="text-[10px] text-zinc-500 font-mono mt-1 block">Released to Devs</span>
+                  <span className="text-[10px] text-zinc-500 font-mono mt-1 block">
+                    Released to Devs
+                  </span>
                 </div>
               </div>
 
               {/* Card 4: Locked */}
               <div className="bg-card-bg thin-border rounded-lg p-5 flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
                 <div className="flex justify-between items-start">
-                  <span className="text-xs font-mono uppercase tracking-wider text-zinc-400">Locked Funds</span>
+                  <span className="text-xs font-mono uppercase tracking-wider text-zinc-400">
+                    Locked Funds
+                  </span>
                   <Lock className="w-4 h-4 text-[#58a0b4]" />
                 </div>
                 <div className="mt-4">
@@ -428,17 +477,24 @@ export default function DashboardPage() {
                     <div className="h-8 w-24 bg-zinc-200 dark:bg-zinc-800 animate-pulse rounded" />
                   ) : (
                     <div className="font-serif text-2xl font-semibold text-foreground flex items-baseline gap-1">
-                      {stats.locked} <span className="text-xs font-mono font-normal text-zinc-500">SOMI</span>
+                      {stats.locked}{" "}
+                      <span className="text-xs font-mono font-normal text-zinc-500">
+                        SOMI
+                      </span>
                     </div>
                   )}
-                  <span className="text-[10px] text-zinc-500 font-mono mt-1 block">Active In Escrow</span>
+                  <span className="text-[10px] text-zinc-500 font-mono mt-1 block">
+                    Active In Escrow
+                  </span>
                 </div>
               </div>
 
               {/* Card 5: Received */}
               <div className="bg-card-bg thin-border rounded-lg p-5 flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
                 <div className="flex justify-between items-start">
-                  <span className="text-xs font-mono uppercase tracking-wider text-zinc-400">Earned Payouts</span>
+                  <span className="text-xs font-mono uppercase tracking-wider text-zinc-400">
+                    Earned Payouts
+                  </span>
                   <TrendingUp className="w-4 h-4 text-emerald-500" />
                 </div>
                 <div className="mt-4">
@@ -446,10 +502,15 @@ export default function DashboardPage() {
                     <div className="h-8 w-24 bg-zinc-200 dark:bg-zinc-800 animate-pulse rounded" />
                   ) : (
                     <div className="font-serif text-2xl font-semibold text-foreground flex items-baseline gap-1">
-                      {stats.received} <span className="text-xs font-mono font-normal text-zinc-500">SOMI</span>
+                      {stats.received}{" "}
+                      <span className="text-xs font-mono font-normal text-zinc-500">
+                        SOMI
+                      </span>
                     </div>
                   )}
-                  <span className="text-[10px] text-zinc-500 font-mono mt-1 block">Earned as Dev</span>
+                  <span className="text-[10px] text-zinc-500 font-mono mt-1 block">
+                    Earned as Dev
+                  </span>
                 </div>
               </div>
             </div>
@@ -507,7 +568,9 @@ export default function DashboardPage() {
               // Listed escrows list
               listedBounties.length === 0 ? (
                 <div className="py-16 text-center thin-border rounded-lg bg-card-bg">
-                  <p className="text-sm text-zinc-400">No listed escrows found.</p>
+                  <p className="text-sm text-zinc-400">
+                    No listed escrows found.
+                  </p>
                   <Button
                     onClick={() => router.push("/bounty")}
                     className="mt-4 text-xs font-mono uppercase tracking-wider bg-[#191919] hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:text-black dark:hover:bg-zinc-200"
@@ -519,10 +582,12 @@ export default function DashboardPage() {
                 <div className="bg-card-bg thin-border rounded-lg overflow-hidden shadow-sm">
                   <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-border-color text-left text-xs">
-                      <thead className="bg-[#fcfbf9] dark:bg-zinc-900/40 text-zinc-400 font-mono uppercase tracking-wider text-[10px]">
+                      <thead className="bg-background border border-foreground text-foreground font-mono uppercase tracking-wider text-[10px]">
                         <tr>
                           <th className="px-6 py-4">ID</th>
-                          <th className="px-6 py-4">Specification Requirements</th>
+                          <th className="px-6 py-4">
+                            Specification Requirements
+                          </th>
                           <th className="px-6 py-4">Status</th>
                           <th className="px-6 py-4">Reward Amount</th>
                           <th className="px-6 py-4">Date Created</th>
@@ -531,8 +596,13 @@ export default function DashboardPage() {
                       </thead>
                       <tbody className="divide-y divide-border-color font-sans">
                         {listedBounties.map((b) => (
-                          <tr key={b.id} className="hover:bg-zinc-500/5 transition-colors">
-                            <td className="px-6 py-4 font-mono font-medium text-foreground">#{b.id}</td>
+                          <tr
+                            key={b.id}
+                            className="hover:bg-zinc-500/5 transition-colors"
+                          >
+                            <td className="px-6 py-4 font-mono font-medium text-foreground">
+                              #{b.id}
+                            </td>
                             <td className="px-6 py-4 max-w-xs sm:max-w-md">
                               <p className="line-clamp-2 text-zinc-600 dark:text-zinc-300 italic">
                                 "{b.spec}"
@@ -541,7 +611,7 @@ export default function DashboardPage() {
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span
                                 className={`text-[9px] font-mono px-2 py-0.5 rounded tracking-wide uppercase ${getBadgeConfig(
-                                  b.status
+                                  b.status,
                                 )}`}
                               >
                                 {BountyStatus[b.status]}
@@ -572,80 +642,97 @@ export default function DashboardPage() {
                   </div>
                 </div>
               )
+            ) : // Participated escrows list
+            participatedBounties.length === 0 ? (
+              <div className="py-16 text-center thin-border rounded-lg bg-card-bg">
+                <p className="text-sm text-zinc-400">
+                  No participated bounties found.
+                </p>
+                <Button
+                  onClick={() => router.push("/bounty")}
+                  className="mt-4 text-xs font-mono uppercase tracking-wider bg-[#191919] hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:text-black dark:hover:bg-zinc-200"
+                >
+                  Find Work & Deliver
+                </Button>
+              </div>
             ) : (
-              // Participated escrows list
-              participatedBounties.length === 0 ? (
-                <div className="py-16 text-center thin-border rounded-lg bg-card-bg">
-                  <p className="text-sm text-zinc-400">No participated bounties found.</p>
-                  <Button
-                    onClick={() => router.push("/bounty")}
-                    className="mt-4 text-xs font-mono uppercase tracking-wider bg-[#191919] hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:text-black dark:hover:bg-zinc-200"
-                  >
-                    Find Work & Deliver
-                  </Button>
-                </div>
-              ) : (
-                <div className="bg-card-bg thin-border rounded-lg overflow-hidden shadow-sm">
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-border-color text-left text-xs">
-                      <thead className="bg-[#fcfbf9] dark:bg-zinc-900/40 text-zinc-400 font-mono uppercase tracking-wider text-[10px]">
-                        <tr>
-                          <th className="px-6 py-4">ID</th>
-                          <th className="px-6 py-4">Specification Requirements</th>
-                          <th className="px-6 py-4">Status</th>
-                          <th className="px-6 py-4">Reward Amount</th>
-                          <th className="px-6 py-4">Date Submitted</th>
-                          <th className="px-6 py-4 text-right">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-border-color font-sans">
-                        {participatedBounties.map((b) => (
-                          <tr key={b.id} className="hover:bg-zinc-500/5 transition-colors">
-                            <td className="px-6 py-4 font-mono font-medium text-foreground">#{b.id}</td>
-                            <td className="px-6 py-4 max-w-xs sm:max-w-md">
-                              <p className="line-clamp-2 text-zinc-600 dark:text-zinc-300 italic">
-                                "{b.spec}"
-                              </p>
-                              {b.prUrl && (
-                                <span className="inline-flex items-center gap-1 text-[10px] text-zinc-400 font-mono mt-1 hover:text-clay">
-                                  PR link: <a href={b.prUrl} target="_blank" rel="noopener noreferrer" className="underline truncate max-w-[150px]">{b.prUrl}</a>
-                                </span>
-                              )}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span
-                                className={`text-[9px] font-mono px-2 py-0.5 rounded tracking-wide uppercase ${getBadgeConfig(
-                                  b.status
-                                )}`}
-                              >
-                                {BountyStatus[b.status]}
+              <div className="bg-card-bg thin-border rounded-lg overflow-hidden shadow-sm">
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-border-color text-left text-xs">
+                    <thead className="bg-[#fcfbf9] dark:bg-zinc-900/40 text-zinc-400 font-mono uppercase tracking-wider text-[10px]">
+                      <tr>
+                        <th className="px-6 py-4">ID</th>
+                        <th className="px-6 py-4">
+                          Specification Requirements
+                        </th>
+                        <th className="px-6 py-4">Status</th>
+                        <th className="px-6 py-4">Reward Amount</th>
+                        <th className="px-6 py-4">Date Submitted</th>
+                        <th className="px-6 py-4 text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border-color font-sans">
+                      {participatedBounties.map((b) => (
+                        <tr
+                          key={b.id}
+                          className="hover:bg-zinc-500/5 transition-colors"
+                        >
+                          <td className="px-6 py-4 font-mono font-medium text-foreground">
+                            #{b.id}
+                          </td>
+                          <td className="px-6 py-4 max-w-xs sm:max-w-md">
+                            <p className="line-clamp-2 text-zinc-600 dark:text-zinc-300 italic">
+                              "{b.spec}"
+                            </p>
+                            {b.prUrl && (
+                              <span className="inline-flex items-center gap-1 text-[10px] text-zinc-400 font-mono mt-1 hover:text-clay">
+                                PR link:{" "}
+                                <a
+                                  href={b.prUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="underline truncate max-w-[150px]"
+                                >
+                                  {b.prUrl}
+                                </a>
                               </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap font-mono font-semibold text-foreground">
-                              <div className="flex items-center gap-1">
-                                <Coins className="w-3.5 h-3.5 text-clay" />
-                                <span>{b.amount} SOMI</span>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-zinc-400 font-mono">
-                              {b.submittedAt ? new Date(b.submittedAt).toLocaleDateString() : "Pending"}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right">
-                              <button
-                                onClick={() => router.push(`/bounty/${b.id}`)}
-                                className="inline-flex items-center gap-1 text-xs font-mono uppercase tracking-wider text-clay hover:underline"
-                              >
-                                Details
-                                <ArrowRight className="w-3 h-3" />
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span
+                              className={`text-[9px] font-mono px-2 py-0.5 rounded tracking-wide uppercase ${getBadgeConfig(
+                                b.status,
+                              )}`}
+                            >
+                              {BountyStatus[b.status]}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap font-mono font-semibold text-foreground">
+                            <div className="flex items-center gap-1">
+                              <Coins className="w-3.5 h-3.5 text-clay" />
+                              <span>{b.amount} SOMI</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-zinc-400 font-mono">
+                            {b.submittedAt
+                              ? new Date(b.submittedAt).toLocaleDateString()
+                              : "Pending"}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right">
+                            <button
+                              onClick={() => router.push(`/bounty/${b.id}`)}
+                              className="inline-flex items-center gap-1 text-xs font-mono uppercase tracking-wider text-clay hover:underline"
+                            >
+                              Details
+                              <ArrowRight className="w-3 h-3" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-              )
+              </div>
             )}
           </div>
         )}
